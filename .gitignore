@@ -8,8 +8,14 @@ wheels/
 
 # Virtual environments
 .venv
-dataset
-metadata
-sft_dataset
+
+# Datasets
+dataset/
+# Environment variables
 .env
-**/unsloth_compiled_cache/
+
+# Compiled files
+unsloth_compiled_cache/
+
+# Checkpoints
+checkpoints/
