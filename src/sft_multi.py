@@ -1,4 +1,4 @@
-from unsloth import FastVisionModel
+from unsloth import FastModel
 import torch
 import os
 from pathlib import Path
@@ -16,8 +16,8 @@ def main(args):
         experiment_name="gemma3n-mutlti-finetune",
     )
 
-    # Load model and processor
-    model, processor = FastVisionModel.from_pretrained(
+    # Load model and tokenizer
+    model, tokenizer = FastModel.from_pretrained(
         model_name=args.model_name_or_path,
         max_seq_length=args.max_seq_length,
         load_in_4bit=args.load_in_4bit,
@@ -26,7 +26,7 @@ def main(args):
     )
 
     # Get PEFT model
-    model = FastVisionModel.get_peft_model(
+    model = FastModel.get_peft_model(
         model,
         finetune_vision_layers=args.tune_vision,
         finetune_language_layers=args.tune_language_layers,
@@ -66,15 +66,15 @@ def main(args):
     else:
         converted_val_dataset = None
     
-    FastVisionModel.for_training(model) # Enable for training!
+    FastModel.for_training(model) # Enable for training!
 
 
     trainer = SFTTrainer(
         model=model,
         train_dataset=converted_train_dataset,
         eval_dataset=converted_val_dataset,
-        processing_class=processor.tokenizer,
-        data_collator=UnslothVisionDataCollator(model, processor),
+        processing_class=tokenizer.tokenizer,
+        data_collator=UnslothVisionDataCollator(model, tokenizer),
         callbacks=[swanlab_callback],
         args=SFTConfig(
             torch_compile = False,
@@ -87,15 +87,16 @@ def main(args):
             gradient_checkpointing_kwargs={"use_reentrant": False},
             max_grad_norm=args.max_grad_norm,  # Maximum norm for gradient clipping
             warmup_ratio=args.warmup_ratio,  # Ratio of total steps for warmup
-            num_train_epochs=args.num_train_epochs,  # Number of training epochs
+            max_steps=args.max_steps, # Total number of training steps
+            # num_train_epochs=args.num_train_epochs,  # Number of training epochs
             learning_rate=args.learning_rate, # Learning rate for training
             logging_steps=args.logging_steps, # Steps interval for logging
             eval_steps=args.eval_steps, # Steps interval for evaluation
             eval_strategy=args.eval_strategy,  # Strategy for evaluation
             save_steps=args.save_steps, # Steps interval for saving
             save_strategy=args.save_strategy, # Strategy for saving the model
-            metric_for_best_model="eval_loss", # Metric to evaluate the best model
-            load_best_model_at_end=True, # Load the best model after training
+            # metric_for_best_model="eval_loss", # Metric to evaluate the best model
+            # load_best_model_at_end=True, # Load the best model after training
             optim=args.optim, # Optimizer type
             weight_decay=args.weight_decay,
             lr_scheduler_type=args.lr_scheduler_type, # Type of learning rate scheduler
@@ -114,20 +115,20 @@ def main(args):
     torch.cuda.empty_cache()
 
     model.save_pretrained(args.output_dir)
-    processor.save_pretrained(args.output_dir)
+    tokenizer.save_pretrained(args.output_dir)
 
     if args.save_merged:
         parent_dir = os.path.dirname(args.output_dir)
-        new_subdir = os.path.join(parent_dir, "merged_e4b")
+        new_subdir = os.path.join(parent_dir, "gek_e4b")
         os.makedirs(new_subdir, exist_ok=True)
-        model.save_pretrained_merged(new_subdir,processor)
+        model.save_pretrained_merged(new_subdir,tokenizer)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Fine-tune a vision model with Unsloth")
     
     # Model and PEFT parameters
-    parser.add_argument("--model_name_or_path", type=str, default="unsloth/phi-3-mini-4k-instruct-vision", help="Model name or path.")
+    parser.add_argument("--model_name_or_path", type=str, default="unsloth/gemma-3n-E2B-it", help="Model name or path.")
     parser.add_argument("--max_seq_length", type=int, default=2048, help="Maximum sequence length.")
     parser.add_argument("--load_in_4bit", action='store_true', help="Load model in 4-bit precision.")
     parser.add_argument("--tune_vision", action='store_true', help="Fine-tune vision layers.")
@@ -150,8 +151,9 @@ if __name__ == "__main__":
     parser.add_argument("--gradient_accumulation_steps", type=int, default=4, help="Gradient accumulation steps.")
     parser.add_argument("--gradient_checkpointing", action='store_true', help="Enable gradient checkpointing.")
     parser.add_argument("--max_grad_norm", type=float, default=0.3, help="Maximum gradient norm for clipping.")
+    parser.add_argument("--max_steps", type=int, default=100, help="Maximum number of training steps.")
     parser.add_argument("--warmup_ratio", type=float, default=0.1, help="Warmup ratio.")
-    parser.add_argument("--num_train_epochs", type=int, default=3, help="Number of training epochs.")
+    # parser.add_argument("--num_train_epochs", type=int, default=3, help="Number of training epochs.")
     parser.add_argument("--learning_rate", type=float, default=2e-5, help="Learning rate.")
     
     # Logging and saving
