@@ -73,8 +73,8 @@ def main(args):
 
         return {"images": [example["image"]], "prompt": prompt, "chosen": chosen, "rejected": rejected}
     
-    train_set = load_dataset(args.dataset_name,split="train[:18%]")
-    eval_set = load_dataset(args.dataset_name,split="train[18%:20%]")
+    train_set = load_dataset(args.dataset_name,split="train")
+    eval_set = load_dataset(args.dataset_name,split="validation")
 
     train_set = train_set.map(format, remove_columns=train_set.column_names)
     eval_set = eval_set.map(format, remove_columns=eval_set.column_names)
@@ -89,7 +89,8 @@ def main(args):
             gradient_checkpointing=args.gradient_checkpointing,
             gradient_accumulation_steps = args.gradient_accumulation_steps,
             warmup_ratio=args.warmup_ratio,
-            num_train_epochs=args.num_train_epochs,
+            max_steps = args.max_steps,
+           # num_train_epochs=args.num_train_epochs,
             learning_rate=args.learning_rate,
             logging_steps=args.logging_steps,
             eval_steps=args.eval_steps,
@@ -150,7 +151,9 @@ if __name__ == "__main__":
     parser.add_argument("--per_device_eval_batch_size", type=int, default=2, help="Evaluation batch size per device.")
     parser.add_argument("--gradient_accumulation_steps", type=int, default=4, help="Gradient accumulation steps.")
     parser.add_argument("--gradient_checkpointing", action='store_true', help="Enable gradient checkpointing.")
-    parser.add_argument("--num_train_epochs", type=int, default=1, help="Number of training epochs.")
+    
+    parser.add_argument("--max_steps", type=int, default=100, help="Maximum number of training steps.")
+   # parser.add_argument("--num_train_epochs", type=int, default=1, help="Number of training epochs.")
     parser.add_argument("--warmup_ratio", type=float, default=0.1, help="Warmup ratio.")
     parser.add_argument("--learning_rate", type=float, default=5e-6, help="Learning rate.")
 

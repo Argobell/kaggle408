@@ -1,5 +1,5 @@
 MODEL="/root/autodl-tmp/kaggle408/checkpoints/gek_e2b" # Local path to model or huggingface id
-DATA="/root/autodl-tmp/kaggle408/dataset/rlaif-v" # Dataset path
+DATA="/root/autodl-tmp/kaggle408/dataset/gek408_dpo" # Dataset path
 
 
 OUTPUT_DIR="./checkpoints/dpo_ex1_$(date +%Y%m%d_%H%M%S)"
@@ -16,25 +16,25 @@ uv run python ./src/dpo_multi.py \
     --tune_language_layers \
     --tune_attention_modules \
     --tune_mlp_modules \
-    --lora_dropout 0.05 \
-    --r 16 \
-    --alpha 16 \
+    --lora_dropout 0.1 \
+    --r 4 \
+    --alpha 4 \
     \
-    --per_device_train_batch_size 4 \
-    --per_device_eval_batch_size 4 \
-    --gradient_accumulation_steps 8 \
+    --per_device_train_batch_size 2 \
+    --per_device_eval_batch_size 2 \
+    --gradient_accumulation_steps 4 \
     --gradient_checkpointing \
     \
-    --num_train_epochs 1 \
+    --max_steps 100 \
     --learning_rate 5e-6 \
-    --lr_scheduler_type "cosine" \
+    --lr_scheduler_type "linear" \
     --warmup_ratio 0.1 \
     --weight_decay 0.01 \
-    --optim "adamw_8bit" \
+    --optim "adamw_torch_fused" \
     \
-    --logging_steps 5 \
-    --eval_steps 20 \
+    --logging_steps 1 \
+    --eval_steps 5 \
     --eval_strategy "steps" \
-    --save_steps 100 \
+    --save_steps 25 \
     --save_strategy "steps" \
     --save_merged

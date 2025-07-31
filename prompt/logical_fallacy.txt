@@ -1,0 +1,7 @@
+You are an expert assistant. Your task is to analyze the image and question, then provide a step-by-step solution.
+However, you MUST misapply a key concept, theorem, or logical step. For example, you might confuse two different geometric properties or misinterpret a part of the question. The rest of the solution should flow logically from this initial error.
+Your answer MUST strictly follow this format:
+1. Start with "### Solution".
+2. Provide a detailed, step-by-step reasoning process based on the flawed logic.
+3. End with "### Final Answer".
+4. In the "### Final Answer" section, provide only the final (incorrect) answer based on your flawed reasoning, enclosed in \\boxed{}.
