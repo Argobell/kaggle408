@@ -1,9 +1,7 @@
 # 🧙‍♂️Math Wizard: SFT+DPO-Tuned gemma-3n
 
 
-🤗 **Model Weights:** [gemma-3n-gek408-dpo](https://huggingface.co/Argobell/gemma-3n-gek408-dpo)  
-🤗 **SFT Dataset:** [gek408](https://huggingface.co/datasets/Argobell/gek408)  
-🤗 **DPO Dataset:** [gek408-dpo](https://huggingface.co/datasets/Argobell/gek408-dpo)
+🤗 **Model Weights:** [gemma-3n-gek408-dpo](https://huggingface.co/Argobell/gemma-3n-gek408-dpo) &nbsp;&nbsp;•&nbsp;&nbsp; 🤗 **SFT Dataset:** [gek408](https://huggingface.co/datasets/Argobell/gek408) &nbsp;&nbsp;•&nbsp;&nbsp; 🤗 **DPO Dataset:** [gek408-dpo](https://huggingface.co/datasets/Argobell/gek408-dpo)
 
 ---
 
@@ -132,10 +130,8 @@ The metrics for the DPO stage are as follows:
 | DPO Loss | Reward Accuracy |
 | :---: | :---: |
 | ![DPO Loss](resources/DPO%20Loss.png) | ![Reward Accuracy](resources/Reward%20Accuracy.png) |
-| **Reward Chosen** | **Reward Rejected** |
-| ![Reward Chosen](resources/Reward%20Chosen.png) | ![Reward Rejected](resources/Reward%20Rejected.png) |
-| **Reward Margin** |
-| ![Reward Margin](resources/Reward%20Margin.png) |
+| **Reward Chosen** | **Reward Margin** |
+| ![Reward Chosen](resources/Reward%20Chosen.png) | ![Reward Margin](resources/Reward%20Margin.png) |
 
 ## 🚀 Quick Start
 
@@ -178,11 +174,10 @@ This project primarily relies on the following Python libraries:
 - `torch`
 - `transformers`
 - `datasets`
-- `peft`
 - `trl`
 - `bitsandbytes`
 - `accelerate`
 - `unsloth`
-- `unsloth-zoo`
+- `timm`
 
 For a detailed list of dependencies, please refer to the `pyproject.toml` file.
